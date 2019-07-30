@@ -6,10 +6,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.BroadcastMessageEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
+
+    final private static int MAX_LENGTH = 100;
 
     private Endpoint receiver;
 
@@ -46,12 +48,19 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
     }
 
     @EventHandler
-    public void broadcast(BroadcastMessageEvent e){
-        // TODO
+    public void server(ServerCommandEvent e) {
+        if (!e.getCommand().substring(0, 4).toLowerCase().equals("say "))
+            return;
+
+        this.receiver.send("Server", e.getCommand().substring(4));
     }
 
     @Override
     public void send(String from, String message) {
+        if (message.length() > MAX_LENGTH) {
+            message = message.substring(0, MAX_LENGTH) + " [...]";
+        }
+
         getServer().broadcastMessage(ChatColor.GREEN + "<" + from + ">" + ChatColor.WHITE + " " + message);
     }
 }
