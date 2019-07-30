@@ -7,8 +7,8 @@ public class BridgePropertyReader {
 
     private final String PROPERTIES_FILENAME = "matrixbridge.properties";
 
-    private final String MATRIX_USER_KEY = "matrix.id";
-    private final String MATRIX_PASSWORD = "matrix.password";
+    private final String MATRIX_USERID_KEY = "matrix.id";
+    private final String MATRIX_PASSWORD_KEY = "matrix.password";
 
     private Properties properties = new Properties();
 
@@ -28,8 +28,8 @@ public class BridgePropertyReader {
     }
 
     private void generateEmptyFile(File file) {
-            properties.setProperty(MATRIX_USER_KEY, "");
-            properties.setProperty(MATRIX_PASSWORD, "");
+            properties.setProperty(MATRIX_USERID_KEY, "");
+            properties.setProperty(MATRIX_PASSWORD_KEY, "");
         try {
             properties.store(new FileOutputStream(file), "Matrix Bridge Properties");
         } catch (FileNotFoundException ex) {
@@ -40,19 +40,19 @@ public class BridgePropertyReader {
     }
 
     public String getDomain() {
-        String tmp = properties.getProperty(MATRIX_USER_KEY);
+        String tmp = properties.getProperty(MATRIX_USERID_KEY);
 
         return tmp.substring(tmp.indexOf(":") + 1);
     }
 
     public String getUsername() {
-        String tmp = properties.getProperty(MATRIX_USER_KEY);
+        String tmp = properties.getProperty(MATRIX_USERID_KEY);
 
         return tmp.substring(1, tmp.indexOf(":"));
     }
 
     public String getPassword() {
-        String tmp = properties.getProperty(MATRIX_PASSWORD);
+        String tmp = properties.getProperty(MATRIX_PASSWORD_KEY);
         return tmp;
     }
 }

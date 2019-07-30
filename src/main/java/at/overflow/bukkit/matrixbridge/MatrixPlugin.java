@@ -13,8 +13,12 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
 
     private Endpoint receiver;
 
+    private BridgePropertyReader properties;
+
     public MatrixPlugin() {
-        this.receiver = new BridgeService(this);
+        properties = new BridgePropertyReader();
+
+        this.receiver = new BridgeService(this, properties);
     }
 
     @Override

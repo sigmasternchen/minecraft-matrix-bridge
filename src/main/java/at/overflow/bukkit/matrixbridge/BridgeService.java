@@ -16,9 +16,9 @@ public class BridgeService extends Thread implements Endpoint {
 
     private BridgePropertyReader properties;
 
-    public BridgeService(Endpoint receiver) {
+    public BridgeService(Endpoint receiver, BridgePropertyReader properties) {
 
-        properties = new BridgePropertyReader();
+        this.properties = properties;
 
         this.receiver = receiver;
 
