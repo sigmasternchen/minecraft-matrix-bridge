@@ -69,8 +69,9 @@ public class BridgeService extends Thread implements Endpoint {
 
     @Override
     public void send(String from, String message) {
+        message = message.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         for (_MatrixRoom room : client.getJoinedRooms()) {
-            room.sendText(from + ": " + message);
+            room.sendFormattedText("<font color='green'>&lt;" + from + "&gt;</font> " + message, "org.matrix.custom.html");
         }
     }
 }

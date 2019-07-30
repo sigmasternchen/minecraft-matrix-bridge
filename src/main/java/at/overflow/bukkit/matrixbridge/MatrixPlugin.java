@@ -52,6 +52,6 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
 
     @Override
     public void send(String from, String message) {
-        getServer().broadcastMessage(ChatColor.GREEN + "[" + from + "]" + ChatColor.WHITE + " " + message);
+        getServer().broadcastMessage(ChatColor.GREEN + "<" + from + ">" + ChatColor.WHITE + " " + message);
     }
 }
