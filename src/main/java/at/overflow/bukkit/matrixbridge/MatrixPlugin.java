@@ -34,12 +34,12 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
 
     @EventHandler
     public void login(PlayerJoinEvent event) {
-        this.receiver.send("Server", "Player " + event.getPlayer().getDisplayName() + " joined the game.");
+        this.receiver.send(this.properties.getMinecraftServerName(), "Player " + event.getPlayer().getDisplayName() + " joined the game.");
     }
 
     @EventHandler
     public void logout(PlayerQuitEvent event) {
-        this.receiver.send("Server", "Player " + event.getPlayer().getDisplayName() + " quit the game.");
+        this.receiver.send(this.properties.getMinecraftServerName(), "Player " + event.getPlayer().getDisplayName() + " quit the game.");
     }
 
     @EventHandler
@@ -52,7 +52,7 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
         if (!e.getCommand().substring(0, 4).toLowerCase().equals("say "))
             return;
 
-        this.receiver.send("Server", e.getCommand().substring(4));
+        this.receiver.send(this.properties.getMinecraftServerName(), e.getCommand().substring(4));
     }
 
     @Override
