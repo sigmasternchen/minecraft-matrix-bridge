@@ -40,30 +40,43 @@ public class BridgeService extends Thread implements Endpoint {
 
         while (true) {
 
-            _SyncData data = client.sync(SyncOptions.build().setSince(syncToken).get());
+            try {
 
-            for (_SyncData.JoinedRoom joinedRoom : data.getRooms().getJoined()) {
-                _MatrixRoom room = client.getRoom(joinedRoom.getId());
+                _SyncData data = client.sync(SyncOptions.build().setSince(syncToken).get());
 
-                for (_MatrixEvent rawEv : joinedRoom.getTimeline().getEvents()) {
-                    if ("m.room.message".contentEquals(rawEv.getType())) {
-                        MatrixJsonRoomMessageEvent msg = new MatrixJsonRoomMessageEvent(rawEv.getJson());
+                for (_SyncData.JoinedRoom joinedRoom : data.getRooms().getJoined()) {
+                    _MatrixRoom room = client.getRoom(joinedRoom.getId());
 
-                        if (properties.getDomain().equals(msg.getSender().getDomain()) && properties.getUsername().equals(msg.getSender().getLocalPart()))
-                            continue;
+                    for (_MatrixEvent rawEv : joinedRoom.getTimeline().getEvents()) {
+                        if ("m.room.message".contentEquals(rawEv.getType())) {
+                            MatrixJsonRoomMessageEvent msg = new MatrixJsonRoomMessageEvent(rawEv.getJson());
 
-                        if (msg.getBody() != null) {
-                            this.receiver.send(msg.getSender().getId(), msg.getBody());
+                            if (properties.getDomain().equals(msg.getSender().getDomain()) && properties.getUsername().equals(msg.getSender().getLocalPart()))
+                                continue;
+
+                            if (msg.getBody() != null) {
+                                this.receiver.send(msg.getSender().getId(), msg.getBody());
+                            }
                         }
                     }
                 }
-            }
 
-            for (_SyncData.InvitedRoom invitedRoom : data.getRooms().getInvited()) {
-                client.getRoom(invitedRoom.getId()).join();
-            }
+                for (_SyncData.InvitedRoom invitedRoom : data.getRooms().getInvited()) {
+                    client.getRoom(invitedRoom.getId()).join();
+                }
 
-            syncToken = data.nextBatchToken();
+                syncToken = data.nextBatchToken();
+
+            } catch(Exception e) {
+                e.printStackTrace();
+                System.out.println("waiting before retrying");
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
     }
 
