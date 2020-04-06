@@ -1,6 +1,8 @@
 package at.overflow.bukkit.matrixbridge;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -8,6 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Collection;
 
 public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
 
@@ -29,8 +33,7 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
     }
 
     @Override
-    public void onDisable() {
-    }
+    public void onDisable() {}
 
     @EventHandler
     public void login(PlayerJoinEvent event) {
@@ -62,5 +65,10 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
         }
 
         getServer().broadcastMessage(ChatColor.GREEN + "<" + from + ">" + ChatColor.WHITE + " " + message);
+    }
+
+    @Override
+    public Collection<? extends Player> getAllOnlinePlayers() {
+        return Bukkit.getOnlinePlayers();
     }
 }

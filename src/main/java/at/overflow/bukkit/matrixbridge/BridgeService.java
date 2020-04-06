@@ -8,6 +8,10 @@ import io.kamax.matrix.client.regular.SyncOptions;
 import io.kamax.matrix.event._MatrixEvent;
 import io.kamax.matrix.hs._MatrixRoom;
 import io.kamax.matrix.json.event.MatrixJsonRoomMessageEvent;
+import org.bukkit.entity.Player;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 public class BridgeService extends Thread implements Endpoint {
     Endpoint receiver;
@@ -15,6 +19,21 @@ public class BridgeService extends Thread implements Endpoint {
     _MatrixClient client;
 
     private BridgePropertyReader properties;
+
+    private void parseCommand(String body) {
+        if(body.startsWith("!players")) {
+            sendAllPlayers();
+        }
+    }
+
+    private void sendAllPlayers() {
+        StringBuilder players = new StringBuilder();
+        Iterator<? extends Player> iterator = this.getAllOnlinePlayers().iterator();
+        while (iterator.hasNext()) {
+            players.append(iterator.toString()).append("\n");
+        }
+        this.receiver.send("", players.toString());
+    }
 
     public BridgeService(Endpoint receiver, BridgePropertyReader properties) {
 
@@ -55,7 +74,11 @@ public class BridgeService extends Thread implements Endpoint {
                                 continue;
 
                             if (msg.getBody() != null) {
-                                this.receiver.send(msg.getSender().getId(), msg.getBody());
+                                if (msg.getBody().startsWith("!")) {
+                                    this.parseCommand(msg.getBody());
+                                } else {
+                                    this.receiver.send(msg.getSender().getId(), msg.getBody());
+                                }
                             }
                         }
                     }
@@ -67,7 +90,7 @@ public class BridgeService extends Thread implements Endpoint {
 
                 syncToken = data.nextBatchToken();
 
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("waiting before retrying");
 
@@ -86,5 +109,10 @@ public class BridgeService extends Thread implements Endpoint {
         for (_MatrixRoom room : client.getJoinedRooms()) {
             room.sendFormattedText("<font color='green'>&lt;" + from + "&gt;</font> " + message, message);
         }
+    }
+
+    @Override
+    public Collection<? extends Player> getAllOnlinePlayers() {
+        return null;
     }
 }
