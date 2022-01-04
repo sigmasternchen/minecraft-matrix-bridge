@@ -7,6 +7,7 @@
     <properties>
         <maven.compiler.source>1.10</maven.compiler.source>
         <maven.compiler.target>1.10</maven.compiler.target>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <groupId>at.overflow.bukkit.matrixbridge</groupId>
@@ -27,15 +28,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
+            <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.kamax</groupId>
             <artifactId>matrix-java-sdk</artifactId>
-            <version>LATEST</version>
+            <version>0.0.18</version>
         </dependency>
     </dependencies>
 
