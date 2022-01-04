@@ -8,6 +8,7 @@ import io.kamax.matrix.client.regular.SyncOptions;
 import io.kamax.matrix.event._MatrixEvent;
 import io.kamax.matrix.hs._MatrixRoom;
 import io.kamax.matrix.json.event.MatrixJsonRoomMessageEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -27,12 +28,26 @@ public class BridgeService extends Thread implements Endpoint {
     }
 
     private void sendAllPlayers() {
-        StringBuilder players = new StringBuilder();
-        Iterator<? extends Player> iterator = this.getAllOnlinePlayers().iterator();
-        while (iterator.hasNext()) {
-            players.append(iterator.toString()).append("\n");
+        StringBuilder fallback = new StringBuilder();
+        StringBuilder playersFormatted = new StringBuilder();
+        Collection<? extends Player> online = this.getAllOnlinePlayers();
+
+        if(online.size() == 0) {
+          this.send(this.properties.getMinecraftServerName(), "No player online");
+          return;
         }
-        this.receiver.send("", players.toString());
+
+        playersFormatted.append("<ul>");
+        fallback.append("Online:\n\n");
+
+        for (Player p : online) {
+          playersFormatted.append("<li>").append(p.getName()).append("</li>");
+          fallback.append(" - ").append(p.getName()).append("\n");
+	}
+
+	this.send("Online",
+		  playersFormatted.toString(),
+		  fallback.toString());
     }
 
     public BridgeService(Endpoint receiver, BridgePropertyReader properties) {
@@ -81,7 +96,7 @@ public class BridgeService extends Thread implements Endpoint {
 
 			    // Process messages with body
                             if (msg.getBody() != null) {
-                                if (msg.getBody().startsWith("!")) {
+                                if (syncToken != null && msg.getBody().startsWith("!")) {
                                     this.parseCommand(msg.getBody());
                                 } else {
                                     this.receiver.send(msg.getSender().getId(), msg.getBody());
@@ -121,9 +136,19 @@ public class BridgeService extends Thread implements Endpoint {
 	  room.sendFormattedText("<font color='green'>&lt;" + from + "&gt;</font> " + message, message);
         }
     }
+  
+  public void send(String from, String messageFormatted, String fallback) {
+        for (_MatrixRoom room : client.getJoinedRooms()) {
+	  if((properties.getRoom() != null)
+	     && !room.getAddress().contentEquals(properties.getRoom())) {
+	    continue;
+	  }
+	  room.sendFormattedText("<font color='green'>&lt;" + from + "&gt;</font> " + messageFormatted, fallback);
+        }
+    }
 
     @Override
     public Collection<? extends Player> getAllOnlinePlayers() {
-        return null;
+      return Bukkit.getOnlinePlayers();
     }
 }
