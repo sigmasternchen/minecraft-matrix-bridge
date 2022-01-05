@@ -66,13 +66,20 @@ public class BridgeService extends Thread implements Endpoint {
                 for (_SyncData.JoinedRoom joinedRoom : data.getRooms().getJoined()) {
                     _MatrixRoom room = client.getRoom(joinedRoom.getId());
 
+		    if((properties.getRoom() != null)
+		       && !room.getAddress().contentEquals(properties.getRoom())) {
+		      continue;
+		    }
+
                     for (_MatrixEvent rawEv : joinedRoom.getTimeline().getEvents()) {
                         if ("m.room.message".contentEquals(rawEv.getType())) {
                             MatrixJsonRoomMessageEvent msg = new MatrixJsonRoomMessageEvent(rawEv.getJson());
 
+			    // Ignore own messages
                             if (properties.getDomain().equals(msg.getSender().getDomain()) && properties.getUsername().equals(msg.getSender().getLocalPart()))
                                 continue;
 
+			    // Process messages with body
                             if (msg.getBody() != null) {
                                 if (msg.getBody().startsWith("!")) {
                                     this.parseCommand(msg.getBody());
@@ -107,7 +114,11 @@ public class BridgeService extends Thread implements Endpoint {
     public void send(String from, String message) {
         message = message.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         for (_MatrixRoom room : client.getJoinedRooms()) {
-            room.sendFormattedText("<font color='green'>&lt;" + from + "&gt;</font> " + message, message);
+	  if((properties.getRoom() != null)
+	     && !room.getAddress().contentEquals(properties.getRoom())) {
+	    continue;
+	  }
+	  room.sendFormattedText("<font color='green'>&lt;" + from + "&gt;</font> " + message, message);
         }
     }
 

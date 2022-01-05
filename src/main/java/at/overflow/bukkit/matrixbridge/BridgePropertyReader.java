@@ -9,6 +9,7 @@ public class BridgePropertyReader {
 
     private final String MATRIX_USERID_KEY = "matrix.id";
     private final String MATRIX_PASSWORD_KEY = "matrix.password";
+    private final String MATRIX_ROOMID = "matrix.room";
 
     private final String MINECRAFT_SERVER_NAME_KEY = "minecraft.server.name";
 
@@ -62,5 +63,10 @@ public class BridgePropertyReader {
     public String getPassword() {
         String tmp = properties.getProperty(MATRIX_PASSWORD_KEY);
         return tmp;
+    }
+
+    public String getRoom() {
+      String tmp = properties.getProperty(MATRIX_ROOMID);
+      return tmp;
     }
 }
