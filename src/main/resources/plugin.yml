@@ -1,4 +1,4 @@
 name: MatrixBridge
 version: 1.0
 main: at.overflow.bukkit.matrixbridge.MatrixPlugin
-api-version: 1.13
+api-version: 1.18
