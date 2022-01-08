@@ -47,7 +47,7 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
 
     @EventHandler
     public void chat(AsyncPlayerChatEvent e){
-        this.receiver.send(e.getPlayer().getDisplayName(), e.getMessage());
+        this.receiver.send(e.getPlayer().getName(), e.getMessage());
     }
 
     @EventHandler

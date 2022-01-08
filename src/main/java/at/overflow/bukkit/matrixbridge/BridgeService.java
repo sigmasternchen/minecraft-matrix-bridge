@@ -24,7 +24,7 @@ public class BridgeService extends Thread implements Endpoint {
     private void parseCommand(String body) {
         if(body.startsWith("!players")) {
             sendAllPlayers();
-        }
+	}
     }
 
     private void sendAllPlayers() {
@@ -102,6 +102,7 @@ public class BridgeService extends Thread implements Endpoint {
                                     this.receiver.send(msg.getSender().getId(), msg.getBody());
                                 }
                             }
+			    room.sendReadReceipt(msg.getId());
                         }
                     }
                 }
