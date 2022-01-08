@@ -5,10 +5,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.event.world.TimeSkipEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collection;
@@ -48,6 +50,18 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
     @EventHandler
     public void chat(AsyncPlayerChatEvent e){
         this.receiver.send(e.getPlayer().getName(), e.getMessage());
+    }
+
+    @EventHandler
+    public void death(PlayerDeathEvent e){
+      this.receiver.send(e.getPlayer().getName(), e.getDeathMessage());
+    }
+
+    @EventHandler
+    public void sleep(TimeSkipEvent e){
+      if(e.getSkipReason() == TimeSkipEvent.SkipReason.NIGHT_SKIP){
+	this.receiver.send(this.properties.getMinecraftServerName(), "Everyone went to bed");
+      }
     }
 
     @EventHandler
