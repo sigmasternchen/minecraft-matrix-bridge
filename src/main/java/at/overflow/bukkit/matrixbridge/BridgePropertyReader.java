@@ -10,6 +10,7 @@ public class BridgePropertyReader {
     private final String MATRIX_USERID_KEY = "matrix.id";
     private final String MATRIX_PASSWORD_KEY = "matrix.password";
     private final String MATRIX_ROOMID_KEY = "matrix.room";
+    private final String MATRIX_ADMINID_KEY = "matrix.admin";
 
     private final String MINECRAFT_SERVER_NAME_KEY = "minecraft.server.name";
 
@@ -33,6 +34,7 @@ public class BridgePropertyReader {
     private void generateEmptyFile(File file) {
             properties.setProperty(MATRIX_USERID_KEY, "");
             properties.setProperty(MATRIX_PASSWORD_KEY, "");
+            properties.setProperty(MATRIX_ADMINID_KEY, "");
             properties.setProperty(MINECRAFT_SERVER_NAME_KEY, "Server");
         try {
             properties.store(new FileOutputStream(file), "Matrix Bridge Properties");
@@ -45,28 +47,27 @@ public class BridgePropertyReader {
 
     public String getDomain() {
         String tmp = properties.getProperty(MATRIX_USERID_KEY);
-
         return tmp.substring(tmp.indexOf(":") + 1);
     }
 
     public String getUsername() {
         String tmp = properties.getProperty(MATRIX_USERID_KEY);
-
         return tmp.substring(1, tmp.indexOf(":"));
     }
 
     public String getMinecraftServerName() {
-        String tmp = properties.getProperty(MINECRAFT_SERVER_NAME_KEY);
-        return tmp;
+        return properties.getProperty(MINECRAFT_SERVER_NAME_KEY);
     }
 
     public String getPassword() {
-        String tmp = properties.getProperty(MATRIX_PASSWORD_KEY);
-        return tmp;
+        return properties.getProperty(MATRIX_PASSWORD_KEY);
     }
 
     public String getRoom() {
-      String tmp = properties.getProperty(MATRIX_ROOMID_KEY);
-      return tmp;
+        return properties.getProperty(MATRIX_ROOMID_KEY);
     }
+
+    public String getAdmin() {
+        return properties.getProperty(MATRIX_ADMINID_KEY);
+    };
 }

@@ -1,4 +1,5 @@
 matrix.id=@username:domain.com
 matrix.password=
 # matrix.room=!roomID:domain.com
+matrix.admin=
 minecraft.server.name=Server
