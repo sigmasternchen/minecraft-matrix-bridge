@@ -24,16 +24,30 @@ public class BridgeService extends Thread implements Endpoint {
     private void parseCommand(String body) {
         if(body.startsWith("!players")) {
             sendAllPlayers();
-        }
+	}
     }
 
     private void sendAllPlayers() {
-        StringBuilder players = new StringBuilder();
-        Iterator<? extends Player> iterator = this.getAllOnlinePlayers().iterator();
-        while (iterator.hasNext()) {
-            players.append(iterator.toString()).append("\n");
+        StringBuilder fallback = new StringBuilder();
+        StringBuilder playersFormatted = new StringBuilder();
+        Collection<? extends Player> online = this.getAllOnlinePlayers();
+
+        if(online.size() == 0) {
+          this.send(this.properties.getMinecraftServerName(), "No player online");
+          return;
         }
-        this.receiver.send("", players.toString());
+
+        playersFormatted.append("<ul>");
+        fallback.append("Online:\n\n");
+
+        for (Player p : online) {
+          playersFormatted.append("<li>").append(p.getName()).append("</li>");
+          fallback.append(" - ").append(p.getName()).append("\n");
+	}
+
+	this.send("Online",
+		  playersFormatted.toString(),
+		  fallback.toString());
     }
 
     public BridgeService(MatrixPlugin receiver, BridgePropertyReader properties) {
@@ -82,7 +96,7 @@ public class BridgeService extends Thread implements Endpoint {
 
 			    // Process messages with body
                             if (msg.getBody() != null) {
-                                if (msg.getBody().startsWith("!")) {
+                                if (syncToken != null && msg.getBody().startsWith("!")) {
                                     this.parseCommand(msg.getBody());
 				} else if (syncToken != null
 					   && msg.getBody().startsWith("$")
@@ -105,6 +119,7 @@ public class BridgeService extends Thread implements Endpoint {
                                     this.receiver.send(msg.getSender().getId(), msg.getBody());
                                 }
                             }
+			    room.sendReadReceipt(msg.getId());
                         }
                     }
                 }
@@ -139,9 +154,19 @@ public class BridgeService extends Thread implements Endpoint {
 	  room.sendFormattedText("<font color='green'>&lt;" + from + "&gt;</font> " + message, message);
         }
     }
+  
+  public void send(String from, String messageFormatted, String fallback) {
+        for (_MatrixRoom room : client.getJoinedRooms()) {
+	  if((properties.getRoom() != null)
+	     && !room.getAddress().contentEquals(properties.getRoom())) {
+	    continue;
+	  }
+	  room.sendFormattedText("<font color='green'>&lt;" + from + "&gt;</font> " + messageFormatted, fallback);
+        }
+    }
 
     @Override
     public Collection<? extends Player> getAllOnlinePlayers() {
-        return null;
+      return Bukkit.getOnlinePlayers();
     }
 }

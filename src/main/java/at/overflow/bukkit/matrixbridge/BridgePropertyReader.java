@@ -64,10 +64,10 @@ public class BridgePropertyReader {
     }
 
     public String getRoom() {
-      return properties.getProperty(MATRIX_ROOMID_KEY);
+        return properties.getProperty(MATRIX_ROOMID_KEY);
     }
 
-  public String getAdmin() {
-      return properties.getProperty(MATRIX_ADMINID_KEY);
-  };
+    public String getAdmin() {
+        return properties.getProperty(MATRIX_ADMINID_KEY);
+    };
 }
