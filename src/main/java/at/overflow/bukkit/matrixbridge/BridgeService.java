@@ -11,6 +11,7 @@ import io.kamax.matrix.json.event.MatrixJsonRoomMessageEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.command.CommandException;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -106,9 +107,17 @@ public class BridgeService extends Thread implements Endpoint {
 								  new Runnable() {
 								    @Override
 								    public void run() {
-								      Bukkit.getServer().dispatchCommand(
-									Bukkit.getServer().getConsoleSender(),
-									msg.getBody().substring(1));
+								      MatrixCommandSender s = new MatrixCommandSender(room, msg.getId(), Bukkit.getServer());
+								      try {
+									if(!Bukkit.getServer().dispatchCommand(s,
+													      msg.getBody().substring(1))) {
+									  s.sendMessage("No target found");
+									}
+								      } catch (CommandException e) {
+									s.sendMessage(e.getMessage());
+								      } finally {
+									s.sendBuffer();
+								      }
 								    }
 								  }
 				      );
