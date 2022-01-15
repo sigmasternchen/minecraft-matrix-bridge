@@ -1,5 +1,7 @@
 package at.overflow.bukkit.matrixbridge;
 
+import static java.lang.Math.min;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -74,11 +76,19 @@ public class MatrixPlugin extends JavaPlugin implements Listener, Endpoint {
 
     @Override
     public void send(String from, String message) {
-        if (message.length() > MAX_LENGTH) {
-            message = message.substring(0, MAX_LENGTH) + " [...]";
-        }
+      if(message.length() < MAX_LENGTH) {
+	getServer().broadcastMessage(ChatColor.GREEN + "<" + from + ">" +ChatColor.WHITE + " " + message);
+      } else {
+        int pos = 0;
+	getServer().broadcastMessage(ChatColor.GREEN + "<" + from + ">");
+        while(pos < message.length())
+        {
+	  int segLen = min(message.length() - pos, MAX_LENGTH);
+          getServer().broadcastMessage(ChatColor.WHITE + "  " + message.substring(pos, pos + segLen));
 
-        getServer().broadcastMessage(ChatColor.GREEN + "<" + from + ">" + ChatColor.WHITE + " " + message);
+	  pos += segLen;
+        }
+      }
     }
 
     @Override
